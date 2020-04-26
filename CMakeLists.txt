@@ -61,6 +61,10 @@ add_executable(serial_example examples/serial_example.cc)
 add_dependencies(serial_example ${PROJECT_NAME})
 target_link_libraries(serial_example ${PROJECT_NAME})
 
+add_executable(serial_receive_arduino examples/serial_receive_arduino.cc)
+add_dependencies(serial_receive_arduino ${PROJECT_NAME})
+target_link_libraries(serial_receive_arduino ${PROJECT_NAME})
+
 ## Include headers
 include_directories(include)
 
