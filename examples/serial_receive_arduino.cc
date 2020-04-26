@@ -17,6 +17,7 @@
  */
 
 #include <string>
+#include <chrono>
 #include <iostream>
 #include <cstdio>
 
@@ -40,6 +41,7 @@ using std::vector;
 struct DataFormat
 {
     bool is_data_good = false;
+    long unix_time = -1;
     double light = -1;
     double soundPressure = -1;
     double motionX = -1;
@@ -47,7 +49,7 @@ struct DataFormat
     double motionZ = -1;
     double temperature = -1;
 
-    DataFormat(string data_str)
+    DataFormat(string data_str, long unix_time_in)
     {
         size_t pos = 0;
         std::string token;
@@ -65,7 +67,7 @@ struct DataFormat
         //printv(data_vec.size());
         if(data_vec.size() == 6)
         {
-
+            unix_time = unix_time_in;
             is_data_good = true;
             light         = data_vec[0];
             soundPressure = data_vec[1];
@@ -81,7 +83,7 @@ struct DataFormat
         std::stringstream ss;
         if(is_data_good)
         {
-            ss<<"light: "<<light<<", soundPressure: "<<soundPressure<<", acc: {"<<motionX<<","<<motionY<<","<<motionZ<<"}, temperature: "<<temperature;
+            ss<<"unix_time: "<<unix_time<<", light: "<<light<<", soundPressure: "<<soundPressure<<", acc: {"<<motionX<<","<<motionY<<","<<motionZ<<"}, temperature: "<<temperature;
         }
         else
         {
@@ -183,8 +185,9 @@ int run(int argc, char **argv)
             // if find \n, take the data from buffer and parse it
             temp_data_str = buffer.substr (0,first_occur);
             printv(temp_data_str);
-
-            DataFormat df(temp_data_str);
+            long microsecondsUTC = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            printv(microsecondsUTC);
+            DataFormat df(temp_data_str,microsecondsUTC);
             printv(df.str());
 
             buffer = buffer.substr(first_occur+1);
