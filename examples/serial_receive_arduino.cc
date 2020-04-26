@@ -203,14 +203,14 @@ int run(int argc, char **argv)
         {
             // if find \n, take the data from buffer and parse it
             temp_data_str = buffer.substr (0,first_occur);
-            printv(temp_data_str);
+            //printv(temp_data_str);
             long microsecondsUTC = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-            printv(microsecondsUTC);
+            //printv(microsecondsUTC);
             DataFormat df(temp_data_str,microsecondsUTC);
             printv(df.str());
             if(df.is_data_good)
             {
-                printv(df.strLite());
+                //printv(df.strLite());
                 myfile << df.strLite();
                 myfile << "\n";
             }
