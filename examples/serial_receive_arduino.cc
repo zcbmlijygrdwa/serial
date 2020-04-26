@@ -18,8 +18,10 @@
 
 #include <string>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <cstdio>
+#include <signal.h>
 
 // OS Specific sleep
 #ifdef _WIN32
@@ -37,6 +39,15 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
+    
+std::ofstream myfile;
+
+void signal_callback_handler(int signum) {
+    cout << "Caught signal " << signum << endl;
+    // Terminate program
+    myfile.close();
+    exit(signum);
+}
 
 struct DataFormat
 {
@@ -89,6 +100,13 @@ struct DataFormat
         {
             ss<<"BadData...";
         }
+        return ss.str();
+    }
+    
+    std::string strLite()
+    {
+        std::stringstream ss;
+        ss<<unix_time<<","<<light<<","<<soundPressure<<","<<motionX<<","<<motionY<<","<<motionZ<<","<<temperature;
         return ss.str();
     }
 };
@@ -169,6 +187,7 @@ int run(int argc, char **argv)
 
     // Test the timeout, there should be 1 second between prints
     cout << "Timeout == 1000ms, asking for 1 more byte than written." << endl;
+    myfile.open ("arduino_data.txt");
     std::string buffer;
     std::string temp_data_str;
     while (true) {
@@ -189,6 +208,12 @@ int run(int argc, char **argv)
             printv(microsecondsUTC);
             DataFormat df(temp_data_str,microsecondsUTC);
             printv(df.str());
+            if(df.is_data_good)
+            {
+                printv(df.strLite());
+                myfile << df.strLite();
+                myfile << "\n";
+            }
 
             buffer = buffer.substr(first_occur+1);
             //printv(buffer);
@@ -197,11 +222,13 @@ int run(int argc, char **argv)
 
         count += 1;
     }
-
+    myfile.close();
     return 0;
 }
 
 int main(int argc, char **argv) {
+    // Register signal and signal handler
+    signal(SIGINT, signal_callback_handler);
     try {
         return run(argc, argv);
     } catch (exception &e) {
