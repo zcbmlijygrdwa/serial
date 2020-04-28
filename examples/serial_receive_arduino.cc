@@ -31,7 +31,7 @@
 #endif
 
 #include "serial/serial.h"
-#include "/home/zhenyu/smt/OAPI-Bot/linux_curl/cpp_program/include/test.hpp"
+#include "/home/pi/smt/OAPI-Bot/linux_curl/cpp_program/include/test.hpp"
 
 using std::string;
 using std::exception;
@@ -52,7 +52,7 @@ void signal_callback_handler(int signum) {
 struct DataFormat
 {
     bool is_data_good = false;
-    long unix_time = -1;
+    long long unix_time = -1;
     double light = -1;
     double soundPressure = -1;
     double motionX = -1;
@@ -60,8 +60,9 @@ struct DataFormat
     double motionZ = -1;
     double temperature = -1;
 
-    DataFormat(string data_str, long unix_time_in)
+    DataFormat(string data_str, long long unix_time_in)
     {
+	    printv(unix_time_in);
         size_t pos = 0;
         std::string token;
         std::string delimiter = ",";
@@ -111,7 +112,7 @@ struct DataFormat
     }
 };
 
-void my_sleep(unsigned long milliseconds) {
+void my_sleep(unsigned long long milliseconds) {
 #ifdef _WIN32
     Sleep(milliseconds); // 100 ms
 #else
@@ -160,7 +161,7 @@ int run(int argc, char **argv)
     }
 
     // Argument 2 is the baudrate
-    unsigned long baud = 0;
+    unsigned long long baud = 0;
 #if defined(WIN32) && !defined(__MINGW32__)
     sscanf_s(argv[2], "%lu", &baud);
 #else
@@ -204,7 +205,7 @@ int run(int argc, char **argv)
             // if find \n, take the data from buffer and parse it
             temp_data_str = buffer.substr (0,first_occur);
             //printv(temp_data_str);
-            long microsecondsUTC = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            long long microsecondsUTC = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             //printv(microsecondsUTC);
             DataFormat df(temp_data_str,microsecondsUTC);
             printv(df.str());
