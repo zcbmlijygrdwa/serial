@@ -48,6 +48,11 @@ endif()
 
 ## Add serial library
 add_library(${PROJECT_NAME} ${serial_SRCS})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+include
+)
+
 if(APPLE)
     target_link_libraries(${PROJECT_NAME} ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY})
 elseif(UNIX)
