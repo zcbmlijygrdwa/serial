@@ -31,7 +31,7 @@
 #endif
 
 #include "serial/serial.h"
-#include "/home/pi/smt/OAPI-Bot/linux_curl/cpp_program/include/test.hpp"
+#include "../../../../smt/OAPI-Bot/linux_curl/cpp_program/include/test.hpp"
 
 using std::string;
 using std::exception;
